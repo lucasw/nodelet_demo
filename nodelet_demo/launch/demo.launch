@@ -17,6 +17,16 @@
       <param name="mt_callback" value="$(arg mt_callback)" />
     </node>
 
+    <!-- This kills the manager
+    <node pkg="nodelet" type="nodelet"
+        name="demo1"
+        args="load nodelet_demo/NodeletDemo manager"
+        output="screen">
+      <param name="callback_delay" value="1.0" />
+      <param name="mt_callback" value="$(arg mt_callback)" />
+    </node>
+    -->
+
     <!-- ns="demo0" -->
     <node name="gen_input" pkg="nodelet_demo" type="gen_input.py"
         output="screen" >

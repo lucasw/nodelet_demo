@@ -44,6 +44,7 @@ class NodeletDemo : public nodelet::Nodelet
 {
   ros::Publisher pub_;
   ros::Subscriber sub_;
+  ros::Subscriber sub2_;
 
   #if 0
   nodelet_demo::DelayConfig config_;

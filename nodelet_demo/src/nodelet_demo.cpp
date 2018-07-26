@@ -57,6 +57,7 @@ void NodeletDemo::drCallback(
 void NodeletDemo::callback(const std_msgs::Float32ConstPtr& msg)
 {
   ROS_INFO_STREAM("cpu id " << get_cpu_id() << ", count " << msg->data);
+  // set true if wanting to track cpu usage
   bool busy_wait = true;
   if (!busy_wait)
   {
@@ -67,11 +68,9 @@ void NodeletDemo::callback(const std_msgs::Float32ConstPtr& msg)
     ros::Time t0 = ros::Time::now();
     while ((ros::Time::now() - t0).toSec() < callback_delay_)
     {
-
     }
   }
 
-  // should pub_ be a MT?
   pub_.publish(msg);
 }
 
@@ -119,6 +118,15 @@ void NodeletDemo::onInit()
 
   sub_ = nh.subscribe("input", input_queue_size,
       &NodeletDemo::callback, this);
+
+#if 0
+  // this crashes the manager
+  if (mt_callback)
+  {
+    sub2_ = nh.subscribe("input", input_queue_size,
+        &NodeletDemo::callback, this);
+  }
+#endif
 
   // timer_ = pnh.createTimer(ros::Duration(1.0),
   //     &NodeletDemo::update, this);
