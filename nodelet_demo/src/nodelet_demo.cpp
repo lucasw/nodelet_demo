@@ -30,6 +30,7 @@
 
 #include <cv_bridge/cv_bridge.h>
 #include <nodelet_demo/nodelet_demo.h>
+#include <nodelet_demo/utility.h>
 
 
 namespace nodelet_demo
@@ -55,7 +56,22 @@ void NodeletDemo::drCallback(
 
 void NodeletDemo::callback(const std_msgs::Float32ConstPtr& msg)
 {
-  ros::Duration(callback_delay_).sleep();
+  ROS_INFO_STREAM("cpu id " << get_cpu_id() << ", count " << msg->data);
+  bool busy_wait = true;
+  if (!busy_wait)
+  {
+    ros::Duration(callback_delay_).sleep();
+  }
+  else
+  {
+    ros::Time t0 = ros::Time::now();
+    while ((ros::Time::now() - t0).toSec() < callback_delay_)
+    {
+
+    }
+  }
+
+  // should pub_ be a MT?
   pub_.publish(msg);
 }
 
@@ -67,25 +83,44 @@ void NodeletDemo::update(const ros::TimerEvent& e)
 
 void NodeletDemo::onInit()
 {
+  bool mt_callback = false;
+  getPrivateNodeHandle().getParam("mt_callback", mt_callback);
+  // auto getNH = &nodelet_demo::NodeletDemo::getPrivateNodeHandle;
+  ros::NodeHandle nh;
+  ros::NodeHandle pnh;
+  if (mt_callback)
+  {
+    ROS_INFO_STREAM("using multi-threaded node handles");
+    nh = getMTNodeHandle();
+    pnh = getMTPrivateNodeHandle();
+  }
+  else
+  {
+    ROS_INFO_STREAM("using single-threaded node handles");
+    nh = getNodeHandle();
+    pnh = getPrivateNodeHandle();
+  }
 
-  int output_queue_size = 5;
-  getPrivateNodeHandle().getParam("output_queue_size", output_queue_size);
-  pub_ = getPrivateNodeHandle().advertise<std_msgs::Float32>("output", output_queue_size);
+  int output_queue_size = 10;
+  pnh.getParam("output_queue_size", output_queue_size);
+  pub_ = nh.advertise<std_msgs::Float32>("output", output_queue_size);
 
 #if 0 
-  server_.reset(new ReconfigureServer(dr_mutex_, getPrivateNodeHandle()));
+  server_.reset(new ReconfigureServer(dr_mutex_, pnh));
   dynamic_reconfigure::Server<nodelet_demo::DelayConfig>::CallbackType cbt =
       boost::bind(&NodeletDemo::callback, this, _1, _2);
   server_->setCallback(cbt);
 #endif
 
-  getPrivateNodeHandle().getParam("callback_delay", callback_delay_);
-  int input_queue_size = 5;
-  getPrivateNodeHandle().getParam("input_queue_size", input_queue_size);
-  sub_ = getPrivateNodeHandle().subscribe("input", input_queue_size,
+  pnh.getParam("callback_delay", callback_delay_);
+
+  int input_queue_size = 10;
+  pnh.getParam("input_queue_size", input_queue_size);
+
+  sub_ = nh.subscribe("input", input_queue_size,
       &NodeletDemo::callback, this);
 
-  // timer_ = getPrivateNodeHandle().createTimer(ros::Duration(1.0),
+  // timer_ = pnh.createTimer(ros::Duration(1.0),
   //     &NodeletDemo::update, this);
 }
 

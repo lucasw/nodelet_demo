@@ -11,6 +11,8 @@ find_package(catkin REQUIRED COMPONENTS
 
 roslint_cpp()
 
+add_compile_options(-std=c++11)
+
 # generate_dynamic_reconfigure_options(
 #   cfg/Delay.cfg
 # )
@@ -27,7 +29,8 @@ include_directories(
 )
 
 add_library(nodelet_demo
-  src/nodelet_demo.cpp)
+  src/nodelet_demo.cpp
+  src/utility.cpp)
 # add_dependencies(nodelet_demo ${PROJECT_NAME}_gencfg)
 target_link_libraries(nodelet_demo ${catkin_LIBRARIES})
 

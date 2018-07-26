@@ -1,23 +1,31 @@
 <?xml version="1.0"?>
 <launch>
+  <arg name="period" default="0.5" />
+  <arg name="mt_callback" default="false" />
+
+  <group>
     <node pkg="nodelet" type="nodelet" name="manager" args="manager"
         output="screen">
       <param name="ltest0" value="1"/>
     </node>
 
-    <node pkg="nodelet" type="nodelet" 
+    <node pkg="nodelet" type="nodelet"
         name="demo0"
         args="load nodelet_demo/NodeletDemo manager"
         output="screen">
       <param name="callback_delay" value="1.0" />
+      <param name="mt_callback" value="$(arg mt_callback)" />
     </node>
 
+    <!-- ns="demo0" -->
     <node name="gen_input" pkg="nodelet_demo" type="gen_input.py"
-        output="screen" ns="demo0" >
-      <param name="period" value="0.8" />
+        output="screen" >
+      <param name="period" value="$(arg period)" />
     </node>
 
     <node name="rqt_plot" pkg="rqt_plot" type="rqt_plot"
-        args="input output" ns="demo0"
+        args="input output"
         output="screen" if="false" />
+
+  </group>
 </launch>
