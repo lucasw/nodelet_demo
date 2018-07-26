@@ -1,0 +1,9 @@
+<library path="lib/libnodelet_demo">
+  <class name="nodelet_demo/NodeletDemo"
+      type="nodelet_demo::NodeletDemo"
+      base_class_type="nodelet::Nodelet">
+    <description>
+      Subscribe to a message, spend a lot of time with it then publish a result.
+    </description>
+  </class>
+</library>
