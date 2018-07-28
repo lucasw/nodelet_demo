@@ -7,7 +7,7 @@
     </description>
   </class>
 
-  <class name="nodelet_demo/Float32NodeletDemux"
+  <class name="Float32NodeletDemux"
       type="Float32NodeletDemux"
       base_class_type="nodelet::Nodelet">
     <description>

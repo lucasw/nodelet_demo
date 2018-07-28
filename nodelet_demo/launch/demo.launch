@@ -30,7 +30,7 @@ The pcl demux also fails, but doesn't give the assertion failure.
       -->
       <!-- args="load pcl/NodeletDEMUX manager" output="screen"-->
       <node pkg="nodelet" type="nodelet" name="data_demux"
-          args="load nodelet_demo/Float32NodeletDemux manager" output="screen">
+          args="load Float32NodeletDemux manager" output="screen">
         <!--remap from="input" to="input" /-->
         <rosparam>
           output_topics: [input1, input2]
