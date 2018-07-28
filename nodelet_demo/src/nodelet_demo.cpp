@@ -37,7 +37,8 @@ namespace nodelet_demo
 {
 
 NodeletDemo::NodeletDemo() :
-  callback_delay_(1.0)
+  callback_delay_(1.0),
+  spinner_(4)
 {
 }
 
@@ -56,7 +57,7 @@ void NodeletDemo::drCallback(
 
 void NodeletDemo::callback(const std_msgs::Float32ConstPtr& msg)
 {
-  ROS_INFO_STREAM("cpu id " << get_cpu_id() << ", count " << msg->data);
+  ROS_INFO_STREAM("start, cpu id " << get_cpu_id() << ", count " << msg->data);
   // set true if wanting to track cpu usage
   bool busy_wait = true;
   if (!busy_wait)
@@ -72,6 +73,7 @@ void NodeletDemo::callback(const std_msgs::Float32ConstPtr& msg)
   }
 
   pub_.publish(msg);
+  ROS_INFO_STREAM("done, cpu id " << get_cpu_id() << ", count " << msg->data);
 }
 
 #if 0
@@ -100,6 +102,10 @@ void NodeletDemo::onInit()
     pnh = getPrivateNodeHandle();
   }
 
+  // This results in error:
+  // Attempt to spin a callback queue from two spinners, one of them being single-threaded.
+  // spinner_.start();
+
   int output_queue_size = 10;
   pnh.getParam("output_queue_size", output_queue_size);
   pub_ = nh.advertise<std_msgs::Float32>("output", output_queue_size);
@@ -116,14 +122,16 @@ void NodeletDemo::onInit()
   int input_queue_size = 10;
   pnh.getParam("input_queue_size", input_queue_size);
 
-  sub_ = nh.subscribe("input", input_queue_size,
+  sub1_ = nh.subscribe("input1", input_queue_size,
       &NodeletDemo::callback, this);
 
+  sub2_ = nh.subscribe("input2", input_queue_size,
+      &NodeletDemo::callback, this);
 #if 0
   // this crashes the manager
   if (mt_callback)
   {
-    sub2_ = nh.subscribe("input", input_queue_size,
+    sub2_ = nh.subscribe("input1", input_queue_size,
         &NodeletDemo::callback, this);
   }
 #endif

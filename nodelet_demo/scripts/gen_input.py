@@ -11,7 +11,8 @@ msg = Float32()
 
 period = rospy.get_param("~period", 0.8)
 
-count = 0
+count = rospy.get_param("~start", 0)
+
 while not rospy.is_shutdown():
     count += 1
     msg.data = count

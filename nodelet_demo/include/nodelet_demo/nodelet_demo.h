@@ -43,9 +43,10 @@ namespace nodelet_demo
 class NodeletDemo : public nodelet::Nodelet
 {
   ros::Publisher pub_;
-  ros::Subscriber sub_;
+  ros::Subscriber sub1_;
   ros::Subscriber sub2_;
 
+  ros::AsyncSpinner spinner_;
   #if 0
   nodelet_demo::DelayConfig config_;
   typedef dynamic_reconfigure::Server<nodelet_demo::DelayConfig> ReconfigureServer;

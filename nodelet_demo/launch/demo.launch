@@ -28,10 +28,18 @@
     -->
 
     <!-- ns="demo0" -->
-    <node name="gen_input" pkg="nodelet_demo" type="gen_input.py"
+    <node name="gen_input1" pkg="nodelet_demo" type="gen_input.py"
         output="screen" >
       <param name="period" value="$(arg period)" />
+      <remap from="input" to="input1" />
     </node>
+    <node name="gen_input2" pkg="nodelet_demo" type="gen_input.py"
+        output="screen" >
+      <param name="period" value="$(arg period)" />
+      <param name="start" value="10000" />
+      <remap from="input" to="input2" />
+    </node>
+
 
     <node name="rqt_plot" pkg="rqt_plot" type="rqt_plot"
         args="input output"
