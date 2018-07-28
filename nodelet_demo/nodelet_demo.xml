@@ -6,4 +6,12 @@
       Subscribe to a message, spend a lot of time with it then publish a result.
     </description>
   </class>
+
+  <class name="nodelet_demo/Float32NodeletDemux"
+      type="Float32NodeletDemux"
+      base_class_type="nodelet::Nodelet">
+    <description>
+      NodeletDEMUX Float32 instance
+    </description>
+  </class>
 </library>

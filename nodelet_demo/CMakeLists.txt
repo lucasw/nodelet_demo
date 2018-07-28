@@ -4,6 +4,7 @@ project(nodelet_demo)
 find_package(catkin REQUIRED COMPONENTS
   dynamic_reconfigure
   nodelet
+  nodelet_topic_tools
   roscpp
   roslint
   std_msgs

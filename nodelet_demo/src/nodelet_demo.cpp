@@ -144,3 +144,7 @@ void NodeletDemo::onInit()
 
 #include <pluginlib/class_list_macros.h>
 PLUGINLIB_EXPORT_CLASS(nodelet_demo::NodeletDemo, nodelet::Nodelet)
+
+#include <nodelet_topic_tools/nodelet_demux.h>
+typedef nodelet::NodeletDEMUX<std_msgs::Float32> Float32NodeletDemux;
+PLUGINLIB_EXPORT_CLASS(Float32NodeletDemux, nodelet::Nodelet);
