@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
 <launch>
-  <arg name="period" default="0.5" />
+  <arg name="period" default="0.1" />
   <arg name="mt_callback" default="false" />
+  <arg name="use_demux" default="false" />
+  <arg name="use_input2" default="false" />
 
   <group>
     <node pkg="nodelet" type="nodelet" name="manager" args="manager"
@@ -9,7 +11,7 @@
       <param name="ltest0" value="1"/>
     </node>
 
-    <group if="true">
+    <group if="$(arg use_demux)" >
       <node name="gen_input" pkg="nodelet_demo" type="gen_input.py"
           output="screen" if="false" >
         <param name="period" value="$(arg period)" />
@@ -25,12 +27,12 @@ nodelet: /usr/include/boost/smart_ptr/shared_ptr.hpp:641: typename boost::detail
 [[/data_demux] [/tmp/binarydeb/ros-kinetic-nodelet-1.9.14/src/nodelet.cpp]:[228] [Failed to load nodelet '/data_demux` of type `nodelet_demo/Float32NodeletDemux` to manager `manager']
 [manager-1] process has died [pid 10468, exit code -6, cmd /opt/ros/kinetic/lib/nodelet/nodelet manager __name:=manager __log:=/home/lucasw/.ros/log/6f210a04-927b-11e8-9cee-d8fc93bc28de/manager-1.log].
 
-
 The pcl demux also fails, but doesn't give the assertion failure.
       -->
       <!-- args="load pcl/NodeletDEMUX manager" output="screen"-->
       <node pkg="nodelet" type="nodelet" name="data_demux"
-          args="load Float32NodeletDemux manager" output="screen">
+          args="load Float32NodeletDemux manager"
+          output="screen">
         <!--remap from="input" to="input" /-->
         <rosparam>
           output_topics: [input1, input2]
@@ -38,24 +40,27 @@ The pcl demux also fails, but doesn't give the assertion failure.
       </node>
     </group>
 
-    <group if="false">
+    <group unless="$(arg use_demux)">
       <node name="gen_input1" pkg="nodelet_demo" type="gen_input.py"
           output="screen" >
         <param name="period" value="$(arg period)" />
         <remap from="input" to="input1" />
       </node>
       <node name="gen_input2" pkg="nodelet_demo" type="gen_input.py"
-          output="screen" >
+          output="screen"
+          if="$(arg use_input2)" >
         <param name="period" value="$(arg period)" />
         <param name="start" value="10000" />
         <remap from="input" to="input2" />
       </node>
     </group>
 
+    <!-- to debug this don't run the load here, instead just run the manager
+      and attach to it with gdb -p process_num and then run the load to
+      see how it may be immediately crashing -->
     <node pkg="nodelet" type="nodelet"
         name="demo0"
         args="load nodelet_demo/NodeletDemo manager"
-        if="false"
         output="screen">
       <param name="callback_delay" value="1.0" />
       <param name="mt_callback" value="$(arg mt_callback)" />
