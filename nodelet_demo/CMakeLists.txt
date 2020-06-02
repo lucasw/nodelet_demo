@@ -1,7 +1,8 @@
-cmake_minimum_required(VERSION 2.8.3)
-project(nodelet_demo)
+cmake_minimum_required(VERSION 3.0)
+project(nodelet_demo VERSION 0.0.1)
 
 find_package(catkin REQUIRED COMPONENTS
+  cv_bridge
   dynamic_reconfigure
   nodelet
   nodelet_topic_tools
@@ -10,7 +11,13 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
 )
 
-roslint_cpp()
+# TODO(lucasw) make utility.cpp pass in the future
+roslint_cpp(
+  src/nodelet_demo.cpp
+  src/nodelet_demo_node.cpp
+  include/nodelet_demo/nodelet_demo.h
+)
+roslint_python()
 
 add_compile_options(-std=c++11)
 

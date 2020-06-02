@@ -110,7 +110,7 @@ void NodeletDemo::onInit()
   pnh.getParam("output_queue_size", output_queue_size);
   pub_ = nh.advertise<std_msgs::Float32>("output", output_queue_size);
 
-#if 0 
+#if 0
   server_.reset(new ReconfigureServer(dr_mutex_, pnh));
   dynamic_reconfigure::Server<nodelet_demo::DelayConfig>::CallbackType cbt =
       boost::bind(&NodeletDemo::callback, this, _1, _2);
