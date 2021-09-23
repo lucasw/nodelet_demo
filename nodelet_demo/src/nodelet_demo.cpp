@@ -37,7 +37,6 @@ namespace nodelet_demo
 {
 
 NodeletDemo::NodeletDemo() :
-  callback_delay_(1.0),
   spinner_(4)
 {
 }
@@ -57,15 +56,16 @@ void NodeletDemo::drCallback(
 
 void NodeletDemo::callback(const std_msgs::Float32ConstPtr& msg)
 {
-  ROS_INFO_STREAM("start, cpu id " << get_cpu_id() << ", count " << msg->data);
-  // set true if wanting to track cpu usage
-  bool busy_wait = true;
-  if (!busy_wait)
+  ROS_INFO_STREAM("start | msg " << msg->data << ", cpu id " << get_cpu_id());
+  // TODO(lucasw) cpu id can change after either of these waiting methods?
+  if (!busy_wait_)
   {
+    ROS_WARN_STREAM_ONCE("not using busy wait, ros sleeping");
     ros::Duration(callback_delay_).sleep();
   }
   else
   {
+    ROS_WARN_STREAM_ONCE("using busy wait");
     ros::Time t0 = ros::Time::now();
     while ((ros::Time::now() - t0).toSec() < callback_delay_)
     {
@@ -73,7 +73,7 @@ void NodeletDemo::callback(const std_msgs::Float32ConstPtr& msg)
   }
 
   pub_.publish(msg);
-  ROS_INFO_STREAM("done, cpu id " << get_cpu_id() << ", count " << msg->data);
+  ROS_INFO_STREAM("done  | msg " << msg->data << ", cpu id " << get_cpu_id());
 }
 
 #if 0
@@ -110,6 +110,7 @@ void NodeletDemo::onInit()
   pnh.getParam("output_queue_size", output_queue_size);
   pub_ = nh.advertise<std_msgs::Float32>("output", output_queue_size);
 
+  pnh.getParam("callback_delay", callback_delay_);
 #if 0
   server_.reset(new ReconfigureServer(dr_mutex_, pnh));
   dynamic_reconfigure::Server<nodelet_demo::DelayConfig>::CallbackType cbt =
@@ -117,16 +118,26 @@ void NodeletDemo::onInit()
   server_->setCallback(cbt);
 #endif
 
-  pnh.getParam("callback_delay", callback_delay_);
+  pnh.getParam("busy_wait", busy_wait_);
 
   int input_queue_size = 10;
   pnh.getParam("input_queue_size", input_queue_size);
 
-  sub1_ = nh.subscribe("input1", input_queue_size,
-      &NodeletDemo::callback, this);
+  // TODO(lucasw) setup sub2 like this also?
+  ros::SubscribeOptions so1;
+  so1.init<std_msgs::Float32>(
+      "input1",
+      input_queue_size,
+      boost::bind(&NodeletDemo::callback, this, _1));
 
+  so1.allow_concurrent_callbacks = true;
+
+  sub1_ = nh.subscribe(so1);
+#if 0
   sub2_ = nh.subscribe("input2", input_queue_size,
       &NodeletDemo::callback, this);
+#endif
+
 #if 0
   // this crashes the manager
   if (mt_callback)

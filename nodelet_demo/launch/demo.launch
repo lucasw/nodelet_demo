@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <launch>
   <arg name="period" default="0.1" />
+  <arg name="busy_wait" default="false" />
   <arg name="mt_callback" default="false" />
   <arg name="use_demux" default="false" />
   <arg name="use_input2" default="false" />
@@ -71,6 +72,7 @@ It's odd that demux uses private namespaces for the inputs and outputs
         output="screen">
       <param name="callback_delay" value="1.0" />
       <param name="mt_callback" value="$(arg mt_callback)" />
+      <param name="busy_wait" value="$(arg busy_wait)" />
     </node>
 
     <!-- This kills the manager

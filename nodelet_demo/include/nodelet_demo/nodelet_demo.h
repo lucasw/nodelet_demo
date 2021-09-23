@@ -56,7 +56,10 @@ class NodeletDemo : public nodelet::Nodelet
   boost::recursive_mutex dr_mutex_;
   #endif
 
-  float callback_delay_;
+  // set true if wanting to track cpu usage
+  bool busy_wait_ = false;
+
+  float callback_delay_ = 1.0;
   void callback(const std_msgs::Float32ConstPtr& msg);
   // ros::Timer timer_;
   // void update(const ros::TimerEvent& e);
