@@ -13,9 +13,9 @@ find_package(catkin REQUIRED COMPONENTS
 
 # TODO(lucasw) make utility.cpp pass in the future
 roslint_cpp(
-  src/nodelet_demo.cpp
-  src/nodelet_demo_node.cpp
-  include/nodelet_demo/nodelet_demo.h
+  src/${PROJECT_NAME}.cpp
+  src/${PROJECT_NAME}_node.cpp
+  include/${PROJECT_NAME}/${PROJECT_NAME}.h
 )
 roslint_python()
 
@@ -27,8 +27,12 @@ add_compile_options(-std=c++11)
 
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES nodelet_demo
-  CATKIN_DEPENDS nodelet roscpp std_msgs
+  LIBRARIES ${PROJECT_NAME}
+  CATKIN_DEPENDS
+  dynamic_reconfigure
+  nodelet
+  roscpp
+  std_msgs
 )
 
 include_directories(
@@ -36,27 +40,33 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-add_library(nodelet_demo
+add_library(${PROJECT_NAME}
   src/nodelet_demo.cpp
   src/utility.cpp)
-# add_dependencies(nodelet_demo ${PROJECT_NAME}_gencfg)
-target_link_libraries(nodelet_demo ${catkin_LIBRARIES})
+# add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}_gencfg)
+target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})
 
 # TODO(lucasw) is this needed?
 # if(catkin_EXPORTED_LIBRARIES)
-#   add_dependencies(nodelet_demo ${catkin_EXPORTED_LIBRARIES})
+#   add_dependencies(${PROJECT_NAME} ${catkin_EXPORTED_LIBRARIES})
 # endif()
 
-add_executable(nodelet_demo_node src/nodelet_demo_node.cpp)
-target_link_libraries(nodelet_demo_node ${catkin_LIBRARIES})
+add_executable(${PROJECT_NAME}_node src/${PROJECT_NAME}_node.cpp)
+target_link_libraries(${PROJECT_NAME}_node ${catkin_LIBRARIES})
 
-install(TARGETS nodelet_demo nodelet_demo_node
+install(TARGETS ${PROJECT_NAME} ${PROJECT_NAME}_node
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
+install(DIRECTORY include/${PROJECT_NAME}/
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+  FILES_MATCHING PATTERN "*.h"
+  PATTERN ".svn" EXCLUDE
+)
+
 install(FILES
-  nodelet_demo.xml
+  ${PROJECT_NAME}.xml
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
