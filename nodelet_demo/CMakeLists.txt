@@ -19,8 +19,6 @@ roslint_cpp(
 )
 roslint_python()
 
-add_compile_options(-std=c++11)
-
 # generate_dynamic_reconfigure_options(
 #   cfg/Delay.cfg
 # )
