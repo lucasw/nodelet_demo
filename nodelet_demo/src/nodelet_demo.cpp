@@ -114,7 +114,7 @@ void NodeletDemo::onInit()
 #if 0
   server_.reset(new ReconfigureServer(dr_mutex_, pnh));
   dynamic_reconfigure::Server<nodelet_demo::DelayConfig>::CallbackType cbt =
-      boost::bind(&NodeletDemo::callback, this, _1, _2);
+      boost::bind(&NodeletDemo::callback, this, boost::placeholders::_1, boost::placeholders::_2);
   server_->setCallback(cbt);
 #endif
 
@@ -128,7 +128,7 @@ void NodeletDemo::onInit()
   so1.init<std_msgs::Float32>(
       "input1",
       input_queue_size,
-      boost::bind(&NodeletDemo::callback, this, _1));
+      boost::bind(&NodeletDemo::callback, this, boost::placeholders::_1));
 
   so1.allow_concurrent_callbacks = true;
 
