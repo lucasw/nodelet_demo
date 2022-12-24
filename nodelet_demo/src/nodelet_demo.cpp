@@ -153,7 +153,7 @@ void NodeletDemo::onInit()
 
 };  // namespace nodelet_demo
 
-#include <pluginlib/class_list_macros.h>
+#include <pluginlib/class_list_macros.hpp>
 PLUGINLIB_EXPORT_CLASS(nodelet_demo::NodeletDemo, nodelet::Nodelet)
 
 #include <nodelet_topic_tools/nodelet_demux.h>
